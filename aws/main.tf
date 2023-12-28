@@ -80,7 +80,7 @@ resource "aws_route_table" "my_private_rt" {
 }
 
 resource "aws_route_table_association" "private" {
-  count = var.subnet_count.public
+  count = var.subnet_count.private
   route_table_id = aws_route_table.my_private_rt.id
   subnet_id = aws_subnet.my_private_subnet[count.index].id
 }
@@ -129,7 +129,6 @@ resource "aws_security_group" "my_db_sg" {
     from_port = "3306"
     to_port = "3306"
     protocol = "tcp"
-    #sesecurity_groups = [aws_security_group.my_web_sg.id]
   }
   tags = {
     "Name" = "My_db_sg"
@@ -182,7 +181,7 @@ resource "aws_instance" "my_web" {
   instance_type = var.settings.web_app.instance_type
   subnet_id = aws_subnet.my_public_subnet[count.index].id
   key_name = aws_key_pair.my_kp.key_name
-#   user_data              = file("userdata.tpl")
+  user_data              = file("userdata.tpl")
   vpc_security_group_ids = [ aws_security_group.my_web_sg.id ]
 
   tags = {
